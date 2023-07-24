@@ -70,7 +70,14 @@ def crawlKumohMail(refreshTime):
     # options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome(options=options)
-    driver.get("https://mail.kumoh.ac.kr/mail/list.do")
+
+    try:
+        driver.get("https://mail.kumoh.ac.kr/mail/list.do")
+    except Exception as e:
+        sendBotMsg(f"Error occured when trying to access the website\n\n{e}", "ERROR")
+        print(f"Error occured when trying to access the website\n\n{e}")
+        driver.quit()
+        return
 
     timeout = 20
     wait = WebDriverWait(driver, timeout)
@@ -119,4 +126,7 @@ def crawlKumohMail(refreshTime):
 
 if __name__ == "__main__":
     refreshTime = 3
-    crawlKumohMail(refreshTime)
+    while True:
+        crawlKumohMail(refreshTime)
+        sendBotMsg("Restart the program", "SYSTEM")
+        print("Restart the program")
