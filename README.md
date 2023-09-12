@@ -1,13 +1,17 @@
 # Kumoh-Mail-Notifier
-KIT Mail Notifier Using Python (selenium, telegram)
+KIT mail notifier using python (selenium, telegram)
 
-## What you need to run this program
-* Your KIT Web Mail Account
-* telegram bot & token
-* telegram chat id
-* Chrome Browser
-* Chrome Driver
+### What you need
+* Your KIT web mail account
+* Telegram bot & token
+* Telegram chat id
 
-## Required packages
+### Dependencies
 * selenium
 * python-telegram-bot
+* chromium
+* webdriver-manager
+```
+sudo snap install chromium
+pip install selenium python-telegram-bot webdriver-manager
+```

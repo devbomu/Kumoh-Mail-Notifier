@@ -2,6 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromiumService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 import time
 import json
 import telegram
@@ -61,18 +65,15 @@ def sendBotMsg(title, sender=""):
 
 def crawlKumohMail(refreshTime):
     # 크롤링 옵션
-    options = webdriver.ChromeOptions()
-    # options.add_argument("--headless")
-    # options.add_argument("--disable-gpu")
-    # options.add_argument("--no-sandbox")
-    # options.add_argument("enable-automation")
-    # options.add_argument("--disable-infobars")
-    # options.add_argument("--disable-dev-shm-usage")
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument("--remote-debugging-port=9515")
 
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()), options=options)
 
     try:
         driver.get("https://mail.kumoh.ac.kr/mail/list.do")
+        print("yes")
     except Exception as e:
         sendBotMsg(f"Error occured when trying to access the website\n\n{e}", "ERROR")
         print(f"Error occured when trying to access the website\n\n{e}")
@@ -94,7 +95,7 @@ def crawlKumohMail(refreshTime):
         driver.quit()
         return
 
-    # 5초 전과 현재의 받은 메일 개수 비교
+    # 15초 전과 현재의 받은 메일 개수 비교
     # 많아지면 받은 순서대로 텔레그램 전송
     while True:
         time.sleep(refreshTime)
@@ -120,13 +121,18 @@ def crawlKumohMail(refreshTime):
                 print(f"{titleList[i-1]}\n\nfrom: {senderList[i-1]}")
                 sendBotMsg(titleList[i-1], senderList[i-1])
                 i -= 1
-        
+
         mailCnt = newMailCnt
         continue
 
 if __name__ == "__main__":
-    refreshTime = 3
+    refreshTime = 15
     while True:
-        crawlKumohMail(refreshTime)
+        try:
+            crawlKumohMail(refreshTime)
+        except Exception as e:
+            sendBotMsg(f"Error occured when crawling KIT mail\n\n{e}", "ERROR")
+            print(f"Error occured when crawling KIT mail\n\n{e}")
+            break
         sendBotMsg("Restart the program", "SYSTEM")
         print("Restart the program")
