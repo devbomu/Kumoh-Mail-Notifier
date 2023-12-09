@@ -80,7 +80,7 @@ def crawlKumohMail(refreshTime):
         driver.quit()
         return
 
-    timeout = 20
+    timeout = 30
     wait = WebDriverWait(driver, timeout)
 
     # 로그인 안 되어있는 경우
@@ -125,14 +125,24 @@ def crawlKumohMail(refreshTime):
         mailCnt = newMailCnt
         continue
 
-if __name__ == "__main__":
+def run(): 
     refreshTime = 15
-    while True:
+    waitTime = 30
+    errCount = 0
+    while errCount < 3:
         try:
             crawlKumohMail(refreshTime)
         except Exception as e:
             sendBotMsg(f"Error occured when crawling KIT mail\n\n{e}", "ERROR")
             print(f"Error occured when crawling KIT mail\n\n{e}")
-            break
-        sendBotMsg("Restart the program", "SYSTEM")
-        print("Restart the program")
+            errCount += 1
+        sendBotMsg(f"Error count = {errCount}", "SYSTEM")
+        print(f"Error count = {errCount}\n")
+        if errCount >= 3:
+            sendBotMsg(f"After {waitTime} seconds, the program runs again.", "SYSTEM")
+            print(f"After {waitTime} seconds, the program runs again.\n\n", "SYSTEM")
+            errCount = 0
+            time.sleep(waitTime)
+
+if __name__ == "__main__":
+    run()

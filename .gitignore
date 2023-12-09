@@ -1,3 +1,15 @@
-chromedriver.exe
+.b*
+.c*
+.l*
+.p*
+.s*
+.v*
+.w*
+
+chromedriver*
+cleanup*
+kmn.zip
+kmn_copy.py
+snap/
 
 credentials.json
